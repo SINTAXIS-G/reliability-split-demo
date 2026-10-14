@@ -20,8 +20,8 @@ import dashboard  # noqa: E402
 
 
 def test_scanner_process_lifecycle_is_healthy(tmp_path, monkeypatch):
-      db_path = tmp_path / "scan_state.db"
-      monkeypatch.setattr(scanner, "DB_PATH", db_path)
+    db_path = tmp_path / "scan_state.db"
+    monkeypatch.setattr(scanner, "DB_PATH", db_path)
 
     stop = threading.Event()
     t = threading.Thread(target=scanner.scanner_loop, args=(0.2, stop), daemon=True)
@@ -40,10 +40,10 @@ def test_scanner_process_lifecycle_is_healthy(tmp_path, monkeypatch):
 
 
 def test_dashboard_cache_goes_stale_while_process_stays_healthy(tmp_path, monkeypatch):
-      db_path = tmp_path / "scan_state.db"
-      monkeypatch.setattr(scanner, "DB_PATH", db_path)
-      monkeypatch.setattr(dashboard, "DB_PATH", db_path)
-      dashboard.read_scan_state.clear()  # fresh cache for this test
+    db_path = tmp_path / "scan_state.db"
+    monkeypatch.setattr(scanner, "DB_PATH", db_path)
+    monkeypatch.setattr(dashboard, "DB_PATH", db_path)
+    dashboard.read_scan_state.clear()  # fresh cache for this test
 
     conn = scanner._connect()
     scanner.run_one_scan(conn, 1)
@@ -61,12 +61,12 @@ def test_dashboard_cache_goes_stale_while_process_stays_healthy(tmp_path, monkey
 
     assert fresh_truth["scan_count"] == 2, "ground truth must reflect the second scan"
     assert stale_cached["scan_count"] == 1, (
-              "this is the defect: st.cache_data with no ttl keeps serving the "
-              "first read even though the process already completed scan #2"
+        "this is the defect: st.cache_data with no ttl keeps serving the "
+        "first read even though the process already completed scan #2"
     )
     assert stale_cached["updated_at"] != fresh_truth["updated_at"], (
-              "divergence between cached view and ground truth -- the evidence "
-              "that isolates this as a delivery defect, not a process defect"
+        "divergence between cached view and ground truth -- the evidence "
+        "that isolates this as a delivery defect, not a process defect"
     )
 
     dashboard.read_scan_state.clear()
